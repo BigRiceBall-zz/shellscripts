@@ -42,5 +42,5 @@ then
 ./sshautopgconfig.sh $server $password
 
 # configure NTP server and configure NTP Client
-./sycn.sh $password $server
+./sync.sh $password $server
 fi

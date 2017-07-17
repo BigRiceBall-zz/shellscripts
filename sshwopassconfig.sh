@@ -47,6 +47,16 @@ expect <<- DONE
     send -- "$password\r"
 
     expect eof
+
+    spawn ssh-copy-id -i $HOME/.ssh/id_rsa.pub -o StrictHostKeyChecking=no localhost
+
+    # Look for passwod prompt
+    expect "*?assword*"
+
+    # Send password aka $password
+    send -- "$password\r"
+
+    expect eof
 DONE
 
 # eval "$(ssh-agent -s)"

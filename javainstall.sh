@@ -26,7 +26,7 @@ then
         exit 1
     fi
     touch /etc/profile.d/jdkenv.sh
-    echo "export JAVA_HOME=${java_dir}/jdk1.8.0_131/bin/java" >> /etc/profile.d/jdkenv.sh
+    echo "export JAVA_HOME=${java_dir}/jdk1.8.0_131/" >> /etc/profile.d/jdkenv.sh
     echo "export PATH=$PATH:${java_dir}/jdk1.8.0_131/bin" >> /etc/profile.d/jdkenv.sh
     # echo "export JAVA_HOME=${java_dir}/jdk1.8.0_131/bin/java" >> $HOME/.bashrc
     # echo "export JAVA_HOME=${java_dir}/jdk1.8.0_131/bin/java" >> $HOME/.profile
