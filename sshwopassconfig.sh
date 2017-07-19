@@ -16,19 +16,19 @@ then
 fi
 
 expect <<- DONE
-set timeout -1
-spawn sudo yum -y install openssh-server openssh-clients
-expect "*?assword*"
-send -- "$password\r"
-expect eof
-spawn sudo chkconfig sshd on
-expect "*?assword*"
-send -- "$password\r"
-expect eof
-spawn sudo service sshd start
-expect "*?assword*"
-send -- "$password\r"
-expect eof
+    set timeout -1
+    spawn sudo yum -y install openssh-server openssh-clients
+    expect "*?assword*"
+    send -- "$password\r"
+    expect eof
+    spawn sudo chkconfig sshd on
+    expect "*?assword*"
+    send -- "$password\r"
+    expect eof
+    spawn sudo service sshd start
+    expect "*?assword*"
+    send -- "$password\r"
+    expect eof
 DONE
 
 

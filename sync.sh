@@ -17,77 +17,77 @@ then
 fi
 
 # modified the client config according to the ip
-sed -i "25 s/.*/server $ip iburst/" ntpclient.conf
+sed -i "25 s/.*/server $ip iburst/" ./ntpconfigfiles/ntpclient.conf
 
 expect <<- DONE
-set timeout -1
+    set timeout -1
 
-# copy ntp server config to /etc/
-spawn sudo cp ./ntp.conf /etc/
-expect "*?assword*"
-send -- "$password\r"
-expect eof
+    # copy ntp server config to /etc/
+    spawn sudo cp ./ntpconfigfiles/ntp.conf /etc/
+    expect "*?assword*"
+    send -- "$password\r"
+    expect eof
 
-# open the port 123
-spawn sudo firewall-cmd --add-service=ntp --permanent
-expect "*?assword*"
-send -- "$password\r"
-expect eof
-spawn sudo firewall-cmd --reload
-expect "*?assword*"
-send -- "$password\r"
-expect eof
+    # open the port 123
+    spawn sudo firewall-cmd --add-service=ntp --permanent
+    expect "*?assword*"
+    send -- "$password\r"
+    expect eof
+    spawn sudo firewall-cmd --reload
+    expect "*?assword*"
+    send -- "$password\r"
+    expect eof
 
-# start the ntpd
-spawn sudo systemctl restart ntpd
-expect "*?assword*"
-send -- "$password\r"
-expect eof
-spawn sudo systemctl enable ntpd.service
-expect "*?assword*"
-send -- "$password\r"
-expect eof
-spawn sudo systemctl status ntpd
-expect "*?assword*"
-send -- "$password\r"
-expect eof
+    # start the ntpd
+    spawn sudo systemctl restart ntpd
+    expect "*?assword*"
+    send -- "$password\r"
+    expect eof
+    spawn sudo systemctl enable ntpd.service
+    expect "*?assword*"
+    send -- "$password\r"
+    expect eof
+    spawn sudo systemctl status ntpd
+    expect "*?assword*"
+    send -- "$password\r"
+    expect eof
 
-# disable chronyd so that ntpd can run on boot
-spawn sudo systemctl disable chronyd.service
-expect "*?assword*"
-send -- "$password\r"
-expect eof
+    # disable chronyd so that ntpd can run on boot
+    spawn sudo systemctl disable chronyd.service
+    expect "*?assword*"
+    send -- "$password\r"
+    expect eof
 
-# start the ntpd when boot
-spawn sudo chkconfig ntpd on
-expect "*?assword*"
-send -- "$password\r"
-expect eof
+    # start the ntpd when boot
+    spawn sudo chkconfig ntpd on
+    expect "*?assword*"
+    send -- "$password\r"
+    expect eof
 
-# send the ntp client config to the client.
-spawn sudo scp ./ntpclient.conf $server:/etc/ntp.conf
-expect "*?assword*"
-send -- "$password\r"
-expect "*?assword*"
-send -- "$password\r"
-expect eof
-# spawn sudo ntpd
-# expect "*?assword*"
-# send -- "$password\r"
-# expect eof
+    # send the ntp client config to the client.
+    spawn sudo scp ./ntpconfigfiles/ntpclient.conf $server:/etc/ntp.conf
+    expect "*?assword*"
+    send -- "$password\r"
+    expect "*?assword*"
+    send -- "$password\r"
+    expect eof
+    # spawn sudo ntpd
+    # expect "*?assword*"
+    # send -- "$password\r"
+    # expect eof
 
 DONE
 
 ssh $server << EOF
-expect <<- DONE
-set timeout -1
-spawn sudo service ntpd stop
-expect "*?assword*"
-send -- "$password\r"
-expect eof
-spawn sudo service ntpd start
-expect "*?assword*"
-send -- "$password\r"
-expect eof
-DONE
+    expect <<- DONE
+        set timeout -1
+        spawn sudo service ntpd stop
+        expect "*?assword*"
+        send -- "$password\r"
+        expect eof
+        spawn sudo service ntpd start
+        expect "*?assword*"
+        send -- "$password\r"
+        expect eof
+    DONE
 EOF

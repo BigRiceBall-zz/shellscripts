@@ -14,17 +14,17 @@ server=$1
 password=$2
 
 expect <<- DONE
-set timeout -1
-spawn sudo scp -o StrictHostKeyChecking=no -r /usr/local/java $server:/usr/local/
-expect "*?assword*"
-send -- "$password\r"
-expect "*?assword*"
-send -- "$password\r"
-expect eof
-spawn sudo scp -o StrictHostKeyChecking=no /etc/profile.d/jdkenv.sh $server:/etc/profile.d/jdkenv.sh
-expect "*?assword*"
-send -- "$password\r"
-expect "*?assword*"
-send -- "$password\r"
-expect eof
+    set timeout -1
+    spawn sudo scp -o StrictHostKeyChecking=no -r /usr/local/java $server:/usr/local/
+    expect "*?assword*"
+    send -- "$password\r"
+    expect "*?assword*"
+    send -- "$password\r"
+    expect eof
+    spawn sudo scp -o StrictHostKeyChecking=no /etc/profile.d/jdkenv.sh $server:/etc/profile.d/jdkenv.sh
+    expect "*?assword*"
+    send -- "$password\r"
+    expect "*?assword*"
+    send -- "$password\r"
+    expect eof
 DONE
