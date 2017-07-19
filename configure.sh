@@ -28,8 +28,10 @@ then
 fi
 
 sleep 1
+source /etc/profile.d/jdkenv.sh
+source /etc/profile.d/hadoopenv.sh
 
+bash << DONE
 echo "pre-config is done"
-
 ./hadoopconfig.sh $password $server
-exit 0
+DONE

@@ -79,15 +79,15 @@ expect <<- DONE
 DONE
 
 ssh $server << EOF
-    expect <<- DONE
-        set timeout -1
-        spawn sudo service ntpd stop
-        expect "*?assword*"
-        send -- "$password\r"
-        expect eof
-        spawn sudo service ntpd start
-        expect "*?assword*"
-        send -- "$password\r"
-        expect eof
-    DONE
+expect <<- DONE
+    set timeout -1
+    spawn sudo service ntpd stop
+    expect "*?assword*"
+    send -- "$password\r"
+    expect eof
+    spawn sudo service ntpd start
+    expect "*?assword*"
+    send -- "$password\r"
+    expect eof
+DONE
 EOF

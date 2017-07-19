@@ -22,13 +22,34 @@ then
 fi
 
 # download the hadoop-2.7.3
-wget -c -O $HOME/Downloads/hadoop.tar.gz -t 0 http://mirrors.tuna.tsinghua.edu.cn/apache/hadoop/common/hadoop-2.7.3/hadoop-2.7.3.tar.gz
+for time in $( seq 1 6 )
+do
+    if [ "$time" = "6" ]
+    then
+        echo "Already tried 5 times, all failed, exit"
+        exit 1
+    fi
+    wget -c -O $HOME/Downloads/hadoop.tar.gz -t 0 http://mirrors.tuna.tsinghua.edu.cn/apache/hadoop/common/hadoop-2.7.3/hadoop-2.7.3.tar.gz
+    md5=$(md5sum $HOME/Downloads/hadoop.tar.gz | cut -d ' ' -f1)
+    md5=$(echo $md5 | tr [a-z] [A-Z])
+    result=$?
+    if [ "$md5" != "3455BB57E4B4906BBEA67B58CCA78FA8" ]
+    then
+        echo "md5 check failed, re-downloading"
+        rm $HOME/Downloads/hadoop.tar.gz
+        continue
+    fi
+    echo -e "\n md5 check success \n"
+    if [ "$result" != "0" ]
+    then
+        echo "failed, download error, re-downloading"
+        rm $HOME/Downloads/hadoop.tar.gz
+        continue
+    else
+        break
+    fi
+done
 
-if [ $? -ne 0 ]
-then
-    echo "failed, download error, may try again"
-    exit 1
-fi
 
 # configure the hosts
 touch ./hadoopconfigfiles/hosts
