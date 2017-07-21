@@ -1,15 +1,14 @@
 #! /bin/bash
 
 password=$1
-server=$2
 
 function usage () {
-    echo 'Usage : Script <password> <username@hostname> '
+    echo 'Usage : Script <password>'
     exit 0
 }
 
 # check whether the necessary parameter is two or not
-if [ "$#" -ne 2 ]
+if [ "$#" -ne 1 ]
 then
     usage
     exit 1
@@ -24,7 +23,7 @@ fi
 # install java jdk
 expect <<- DONE
     set timeout -1
-    spawn sudo ./javainstall.sh
+    spawn sudo ./jdkserver.sh
     expect {
         "*?assword*" {
             send -- "$password\r"
@@ -41,14 +40,18 @@ DONE
 
 if [ $? -ne 1 ]
 then
+
+    ./sshserver.sh $password
     # configure ssh without password
-    ./sshwopassconfig.sh $server $password
+    ./sshclients.sh $password
 
     # install java jdk in another server
-    ./sshautopgconfig.sh $server $password
+    ./jdkclients.sh $password
 
     # configure NTP server and configure NTP Client
-    ./sync.sh $password $server
+    ./ntpserver.sh $password
+    ./ntpclients.sh $password
+
     exit 0
 else
     exit 1

@@ -2,15 +2,16 @@
 
 hadoop_dir=/usr/local
 password=$1
-server=$2
+clients=($(./getClientsIP.sh))
 ip=$(ip route get 8.8.8.8 | head -1 | cut -d' ' -f8)
 
 function usage () {
-    echo 'Usage : Script <password> <username@server address>'
+    echo 'Usage : Script <password>'
     exit 0
 }
 
-if [ "$#" -ne 2 ]
+# check whether the necessary parameter is empty or not
+if [ "$#" -ne 1 ]
 then
   usage
 fi
@@ -18,6 +19,13 @@ fi
 if [ `whoami` = "root" ]
 then
     echo "Don't run as root!"
+    exit 1
+fi
+
+# check whether the IP array is empty or not.
+if [ ${#clients[@]} -eq 0 ]
+then
+    echo "There are some errors in the clients file"
     exit 1
 fi
 
@@ -55,7 +63,16 @@ done
 touch ./hadoopconfigfiles/hosts
 echo "127.0.0.1 localhost" > ./hadoopconfigfiles/hosts
 echo "$ip hadoop-master" >> ./hadoopconfigfiles/hosts
-echo "$server hadoop-slave-1" >> ./hadoopconfigfiles/hosts
+for x in $( seq 0 `expr ${#clients[@]} - 1` )
+do
+    echo "${clients[$x]} hadoop-slave-`expr $x + 1`" >> ./hadoopconfigfiles/hosts
+    if [ $x -eq 0 ]
+    then
+        echo "hadoop-slave-`expr $x + 1`" > ./hadoopconfigfiles/slaves
+    else
+        echo "hadoop-slave-`expr $x + 1`" >> ./hadoopconfigfiles/slaves
+    fi
+done
 
 
 expect <<- DONE
@@ -69,14 +86,6 @@ expect <<- DONE
 
     # copy the host file to /etc/ in namenode
     spawn sudo cp ./hadoopconfigfiles/hosts /etc/hosts
-    expect "*?assword*"
-    send -- "$password\r"
-    expect eof
-
-    # configure the host file to datanode
-    spawn sudo scp -o StrictHostKeyChecking=no ./hadoopconfigfiles/hosts $server:/etc/hosts
-    expect "*?assword*"
-    send -- "$password\r"
     expect "*?assword*"
     send -- "$password\r"
     expect eof
@@ -154,81 +163,39 @@ expect <<- DONE
     # expect "*?assword*"
     # send -- "$password\r"
     # expect eof
-
-    # copy the hadoop to datanodes
-    spawn sudo scp -r ${hadoop_dir}/hadoop $server:/usr/local/
-    expect "*?assword*"
-    send -- "$password\r"
-    expect "*?assword*"
-    send -- "$password\r"
-    expect eof
-    spawn sudo scp ./hadoopconfigfiles/hadoopenv.sh $server:/etc/profile.d/
-    expect "*?assword*"
-    send -- "$password\r"
-    expect "*?assword*"
-    send -- "$password\r"
-    expect eof
 DONE
-
-ssh $server << EOF
-    expect <<- DONE
-        # change the hostname of datanode
-        spawn sudo hostname hadoop-slave-1
-        expect "*?assword*"
-        send -- "$password\r"
-        expect eof
-
-        # change the owner of the folder so that the user can access without sudo
-        spawn sudo chown -R $(whoami).$(whoami) /usr/local/hadoop
-        expect "*?assword*"
-        send -- "$password\r"
-        expect eof
-
-        # stop the firewall and disable the firewall of the datanodes when boot
-        spawn sudo systemctl stop firewalld.service
-        expect "*?assword*"
-        send -- "$password\r"
-        expect eof
-        spawn sudo systemctl disable firewalld.service
-        expect "*?assword*"
-        send -- "$password\r"
-        expect eof
-    DONE
-EOF
-
-rm ./hadoopconfigfiles/hosts
 
 source /etc/profile.d/hadoopenv.sh
 
-# format the namenode and datanode and start the dfs and yarn
-expect <<- DONE
-    spawn $HADOOP_HOME/bin/hadoop namenode -format
-    expect {
-        "*Are you sure you want to continue connecting*" {
-            send -- "yes\r"
-            exp_continue
-        }
-        eof
-    }
-
-    spawn $HADOOP_HOME/sbin/start-dfs.sh
-    expect {
-        "*Are you sure you want to continue connecting*" {
-            send -- "yes\r"
-            exp_continue
-        }
-        eof
-    }
-
-    spawn $HADOOP_HOME/sbin/start-yarn.sh
-    expect {
-        "*Are you sure you want to continue connecting*" {
-            send -- "yes\r"
-            exp_continue
-        }
-        eof
-    }
-DONE
-$HADOOP_HOME/sbin/mr-jobhistory-daemon.sh start historyserver
-
-exit 0
+# # format the namenode and datanode and start the dfs and yarn
+# expect <<- DONE
+#     spawn $HADOOP_HOME/bin/hadoop namenode -format
+#     expect {
+#         "*Are you sure you want to continue connecting*" {
+#             send -- "yes\r"
+#             exp_continue
+#         }
+#         eof
+#     }
+#
+#     spawn $HADOOP_HOME/sbin/start-dfs.sh
+#     expect {
+#         "*Are you sure you want to continue connecting*" {
+#             send -- "yes\r"
+#             exp_continue
+#         }
+#         eof
+#     }
+#
+#     spawn $HADOOP_HOME/sbin/start-yarn.sh
+#     expect {
+#         "*Are you sure you want to continue connecting*" {
+#             send -- "yes\r"
+#             exp_continue
+#         }
+#         eof
+#     }
+# DONE
+# $HADOOP_HOME/sbin/mr-jobhistory-daemon.sh start historyserver
+#
+# exit 0

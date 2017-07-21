@@ -1,15 +1,13 @@
 #!/usr/bin/env bash
 
-server=$1
-filname=${filepath##*/}
-password=$2
+password=$1
 function usage () {
-    echo 'Usage : Script <username@hostname> <password>'
+    echo 'Usage : Script <password>'
     exit 0
 }
 
 # check whether the necessary parameter is empty or not
-if [ "$#" -ne 2 ]
+if [ "$#" -ne 1 ]
 then
     usage
     exit 1
@@ -38,15 +36,6 @@ ssh-keygen -b 4096 -f $HOME/.ssh/id_rsa -N '' -t rsa
 
 expect <<- DONE
     set timeout -1
-    spawn ssh-copy-id -i $HOME/.ssh/id_rsa.pub -o StrictHostKeyChecking=no $server
-
-    # Look for passwod prompt
-    expect "*?assword*"
-
-    # Send password aka $password
-    send -- "$password\r"
-
-    expect eof
 
     spawn ssh-copy-id -i $HOME/.ssh/id_rsa.pub -o StrictHostKeyChecking=no localhost
 
