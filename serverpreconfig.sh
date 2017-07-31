@@ -4,7 +4,7 @@ password=$1
 
 function usage () {
     echo 'Usage : Script <password>'
-    exit 0
+    exit 1
 }
 
 # check whether the necessary parameter is two or not
@@ -40,17 +40,10 @@ DONE
 
 if [ $? -ne 1 ]
 then
-
-    ./sshserver.sh $password
     # configure ssh without password
-    ./sshclients.sh $password
-
-    # install java jdk in another server
-    ./jdkclients.sh $password
-
-    # configure NTP server and configure NTP Client
+    ./sshserver.sh $password
+    # configure NTP server
     ./ntpserver.sh $password
-    ./ntpclients.sh $password
 
     exit 0
 else

@@ -4,7 +4,7 @@ password=$1
 
 function usage () {
     echo 'Usage : Script <password>'
-    exit 0
+    exit 1
 }
 
 # check whether the necessary parameter is two or not

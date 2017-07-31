@@ -20,8 +20,8 @@ then
             exit 1
         fi
         wget -c -O ${java_dir}/jdk.tar.gz -t 0 --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u141-b15/336fa29ff2bb4ef291e347e091f7f4a7/jdk-8u141-linux-x64.tar.gz
-        md5=$(md5sum ${java_dir}/jdk.tar.gz | cut -d ' ' -f1)
         result=$?
+        md5=$(md5sum ${java_dir}/jdk.tar.gz | cut -d ' ' -f1)
         if [ "$md5" != "8cf4c4e00744bfafc023d770cb65328c" ]
         then
             echo "md5 check failed, re-downloading"
@@ -54,9 +54,10 @@ then
             break
         fi
     done
+    mv ${java_dir}/jdk1.8.0_141 ${java_dir}/jdk
     touch /etc/profile.d/jdkenv.sh
-    echo "export JAVA_HOME=${java_dir}/jdk1.8.0_141" >> /etc/profile.d/jdkenv.sh
-    echo "export PATH=$PATH:${java_dir}/jdk1.8.0_141/bin" >> /etc/profile.d/jdkenv.sh
+    echo "export JAVA_HOME=${java_dir}/jdk" >> /etc/profile.d/jdkenv.sh
+    echo "export PATH=$PATH:${java_dir}/jdk/bin" >> /etc/profile.d/jdkenv.sh
     # echo "export JAVA_HOME=${java_dir}/jdk1.8.0_131/bin/java" >> $HOME/.bashrc
     # echo "export JAVA_HOME=${java_dir}/jdk1.8.0_131/bin/java" >> $HOME/.profile
     # echo "export PATH=$PATH:${java_dir}/jdk1.8.0_131/bin" >> $HOME/.bashrc

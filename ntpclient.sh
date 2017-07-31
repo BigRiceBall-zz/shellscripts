@@ -2,39 +2,40 @@
 
 password=$1
 ip=$(ip route get 8.8.8.8 | head -1 | cut -d' ' -f8)
-clients=($(./getClientsIP.sh))
+client=$2
+# clients=($(./getClientsIP.sh))
 
 function usage () {
     echo 'Usage : Script <password>'
-    exit 0
+    exit 1
 }
 
 # check whether the necessary parameter is empty or not
-if [ "$#" -ne 1 ]
+if [ "$#" -ne 2 ]
 then
     usage
     exit 1
 fi
 
 
-if [ ${#clients[@]} -eq 0 ]
-then
-    echo "There are some errors in the clients file"
-    exit 1
-fi
+# if [ ${#clients[@]} -eq 0 ]
+# then
+#     echo "There are some errors in the clients file"
+#     exit 1
+# fi
 
 # modified the client config according to the ip
 sed -i "25 s/.*/server $ip iburst/" ./ntpconfigfiles/ntpclient.conf
 
-
-for x in $( seq 0 `expr ${#clients[@]} - 1` )
-do
+#
+# for x in $( seq 0 `expr ${#clients[@]} - 1` )
+# do
 
 expect <<- DONE
     set timeout -1
 
     # send the ntp client config to the client.
-    spawn sudo scp -o StrictHostKeyChecking=no ./ntpconfigfiles/ntpclient.conf ${clients[$x]}:/etc/ntp.conf
+    spawn sudo scp -o StrictHostKeyChecking=no ./ntpconfigfiles/ntpclient.conf $client:/etc/ntp.conf
     expect {
         "*?assword*" {
             send -- "$password\r"
@@ -44,7 +45,7 @@ expect <<- DONE
     }
 DONE
 
-ssh ${clients[$x]} << EOF
+ssh $client << EOF
 expect <<- DONE
     set timeout -1
 
@@ -72,4 +73,4 @@ expect <<- DONE
 DONE
 EOF
 
-done
+# done

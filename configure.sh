@@ -5,7 +5,7 @@ server=$2
 
 function usage () {
     echo 'Usage : Script <password> <username@server address>'
-    exit 0
+    exit 1
 }
 
 if [ "$#" -ne 2 ]

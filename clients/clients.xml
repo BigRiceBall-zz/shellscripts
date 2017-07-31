@@ -1,10 +1,19 @@
 <configuration>
     <nameservice name="cluster-1">
         <!--Note: the formate of namenode has to be <namenode id=, ip=>, name is the id of the namenode in the cluster -->
-        <!--Note: the hostname of the namenode is automatically named by consisted of name of nameservice and id of namenode.-->
-        <!-- e.g. nameservice-namenode, cluster-1-nn-1-->--> 
-        <namenode id="nn-1" ip="192.168.1.31"/>
-        <namenode id="nn-2" ip="192.168.1.158"/>
-        <journalnode id="jn-1" ip="192.168.1.158"/>
+        <!--Note: the hostname of the namenode is automatically named by consisting of name of nameservice and id of namenode.-->
+        <!-- e.g. nameservice-namenode, cluster-1-nn-1-->
+        <namenode ip="192.168.1.83"/>
+        <namenode ip="192.168.1.31"/>
+        <journalnode ip="192.168.1.31"/>
+        <journalnode ip="192.168.1.47"/>
+        <journalnode ip="192.168.1.158"/>
+        <zookeeper ip="192.168.1.31"/>
+        <zookeeper ip="192.168.1.47"/>
+        <zookeeper ip="192.168.1.158"/>
+        <resourcemanager ip="192.168.1.83"/>
     </nameservice>
+    <datanode ip="192.168.1.47"/>
+    <datanode ip="192.168.1.158"/>
+    <jobhistory ip="192.168.1.158"/>
 </configuration>

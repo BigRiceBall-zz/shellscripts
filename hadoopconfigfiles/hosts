@@ -1,4 +1,13 @@
 127.0.0.1 localhost
-192.168.1.83 hadoop-master
-192.168.1.158 hadoop-slave-1
-192.168.1.31 hadoop-slave-2
+192.168.1.31 cluster-1-namenode-2
+192.168.1.31 cluster-1-journalnode-1
+192.168.1.31 cluster-1-zookeeper-1
+192.168.1.158 cluster-1-journalnode-3
+192.168.1.158 cluster-1-zookeeper-3
+192.168.1.83 cluster-1-namenode-1
+192.168.1.83 cluster-1-resourcemanager-1
+192.168.1.47 cluster-1-journalnode-2
+192.168.1.47 cluster-1-zookeeper-2
+192.168.1.47 datanode-1
+192.168.1.158 datanode-2
+192.168.1.158 jobhistory

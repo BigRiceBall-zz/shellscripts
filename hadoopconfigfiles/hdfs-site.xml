@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
 <!--
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,32 +13,74 @@
   See the License for the specific language governing permissions and
   limitations under the License. See accompanying LICENSE file.
 -->
-
 <!-- Put site-specific property overrides in this file. -->
-
 <configuration>
-    <property>
-        <name>dfs.namenode.name.dir</name>
-        <value>file:/home/sunyue/hadoop_work/hdfs/namenode</value>
-    </property>
-    <property>
-        <name>dfs.datanode.data.dir</name>
-        <value>file:/home/sunyue/hadoop_work/hdfs/datanode</value>
-    </property>
-    <property>
-        <name>dfs.namenode.checkpoint.dir</name>
-        <value>file:/home/sunyue/hadoop_work/hdfs/namenodesecondary</value>
-    </property>
-    <property>
-        <name>dfs.replication</name>
-        <value>1</value>
-    </property>
-    <property>
-        <name>dfs.block.size</name>
-        <value>134217728</value>
-    </property>
-    <property>
-        <name>dfs.webhdfs.enabled</name>
-        <value>true</value>
-    </property>
+  <property>
+    <name>dfs.namenode.name.dir</name>
+    <value>file:/home/sunyue/hadoop_work/hdfs/namenode</value>
+  </property>
+  <property>
+    <name>dfs.datanode.data.dir</name>
+    <value>file:/home/sunyue/hadoop_work/hdfs/datanode</value>
+  </property>
+  <property>
+    <name>dfs.replication</name>
+    <value>1</value>
+  </property>
+  <property>
+    <name>dfs.block.size</name>
+    <value>134217728</value>
+  </property>
+  <property>
+    <name>dfs.webhdfs.enabled</name>
+    <value>true</value>
+  </property>
+  <property>
+    <name>dfs.nameservices</name>
+    <value>cluster-1</value>
+  </property>
+  <property>
+    <name>dfs.ha.namenodes.cluster-1</name>
+    <value>namenode-1,namenode-2</value>
+  </property>
+  <property>
+    <name>dfs.namenode.rpc-address.cluster-1.namenode-1</name>
+    <value>cluster-1-namenode-1:8020</value>
+  </property>
+  <property>
+    <name>dfs.namenode.http-address.cluster-1.namenode-1</name>
+    <value>cluster-1-namenode-1:50070</value>
+  </property>
+  <property>
+    <name>dfs.namenode.rpc-address.cluster-1.namenode-2</name>
+    <value>cluster-1-namenode-2:8020</value>
+  </property>
+  <property>
+    <name>dfs.namenode.http-address.cluster-1.namenode-2</name>
+    <value>cluster-1-namenode-2:50070</value>
+  </property>
+  <property>
+    <name>dfs.namenode.shared.edits.dir</name>
+    <value>qjournal://cluster-1-journalnode-1:8485;cluster-1-journalnode-2:8485;cluster-1-journalnode-3:8485/cluster-1</value>
+  </property>
+  <property>
+    <name>dfs.client.failover.proxy.provider.cluster-1</name>
+    <value>org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider</value>
+  </property>
+  <property>
+    <name>dfs.ha.automatic-failover.enabled.cluster-1</name>
+    <value>true</value>
+  </property>
+  <property>
+    <name>dfs.ha.fencing.methods</name>
+    <value>sshfence</value>
+  </property>
+  <property>
+    <name>dfs.journalnode.edits.dir</name>
+    <value>/home/sunyue/hadoop_work/hdfs/journalnode</value>
+  </property>
+  <property>
+    <name>dfs.ha.fencing.ssh.private-key-files</name>
+    <value>/home/sunyue/.ssh/id_rsa</value>
+  </property>
 </configuration>
