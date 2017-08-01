@@ -1,30 +1,23 @@
 # shellscripts
 The main goal of this project is to automate the initial configuration of hadoop.
 
-Note: At present, it only support one namenode and one datanode.
+### Run
+***
+automatically configure all including jdk, ntp, ssh, hadoop in server and all clients
+(Note: configure the file "clients.xml" in ./clients folder before runing the following command)  
+`python hadoopconfig.py password`
 
-# Run
+automatically download and configure hadoop in server  
+`./hadoopmaster.sh password masterhostname`
 
-automatically download java jdk and congfigure enviroment vairables, ssh,
-ntp, hadoop. (This script will run pre-config.sh and hadoopconfig.sh together, so you only need to run the following command)
+automatically transfer hadoop to client  
+`./hadoopmaster.sh password client clienthostname`
 
-./configure.sh password server
 
+automatically download java jdk and congfigure enviroment vairables, ssh, and ntp in server  
+`./serverpreconfig.sh password`
+
+automatically transfer java jdk, ssh, and ntp to client      
+`./clientpreconfig.sh password client`
 
 # Explanation of the files
-
-## automatically download java jdk and congfigure enviroment vairables, ssh, ntp in namenode and datanode
-
-./pre-config.sh password server
-
-## automatically download hadoop and configure it in namenode and datanode
-./hadoopconfig.sh password server
-
-## automatically configure the NTP server and send configuration to client
-./sync.sh password client
-
-## automatically configure the client jdk
-./sshautopgconfig.sh client password
-
-## automatically configure ssh that it can assess client without password
-./sshwopassconfig.sh client password

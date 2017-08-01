@@ -23,8 +23,6 @@ fi
 #     exit 1
 # fi
 
-# for x in $( seq 0 `expr ${#clients[@]} - 1` )
-# do
 expect <<- DONE
     set timeout -1
     spawn sudo scp -o StrictHostKeyChecking=no -r /usr/local/java $client:/usr/local/
@@ -44,4 +42,3 @@ expect <<- DONE
         eof
     }
 DONE
-# done

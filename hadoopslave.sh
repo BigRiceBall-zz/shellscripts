@@ -4,7 +4,6 @@ hadoop_dir=/usr/local
 password=$1
 client=$2
 hostname=$3
-# clients=($(./getClientsIP.sh))
 
 function usage () {
     echo 'Usage : Script <password> <client> <client hostname>'
@@ -23,16 +22,6 @@ then
     usage
     exit 1
 fi
-
-# check whether the IP array is empty or not.
-# if [ ${#clients[@]} -eq 0 ]
-# then
-#     echo "There are some errors in the clients file"
-#     exit 1
-# fi
-#
-# for x in $( seq 0 `expr ${#clients[@]} - 1` )
-# do
 
 expect <<- DONE
     set timeout -1
