@@ -3,9 +3,11 @@
 
 zookeeper_dir=/usr/local
 password=$1
+client=$2
+clientID=$3
 
 function usage () {
-    echo 'Usage : Script <password>'
+    echo 'Usage : Script <password> <client address>'
     exit 1
 }
 
@@ -16,7 +18,7 @@ then
 fi
 
 # check whether the necessary parameter is empty or not
-if [ "$#" -ne 1 ]
+if [ "$#" -ne 3 ]
 then
     usage
     exit 1
@@ -31,7 +33,6 @@ do
         exit 1
     fi
     wget -c -O $HOME/Downloads/zookeeper.tar.gz -t 0 http://mirror.bit.edu.cn/apache/zookeeper/zookeeper-3.4.10/zookeeper-3.4.10.tar.gz
-    result=$?
     md5=$(md5sum $HOME/Downloads/zookeeper.tar.gz | cut -d ' ' -f1)
     if [ "$md5" != "e4cf1b1593ca870bf1c7a75188f09678" ]
     then
@@ -40,12 +41,81 @@ do
         continue
     fi
     echo -e "\n md5 check success \n"
-    if [ "$result" != "0" ]
-    then
-        echo "failed, download error, re-downloading"
-        rm $HOME/Downloads/zookeeper.tar.gz
-        continue
-    else
-        break
-    fi
+    break
 done
+
+# configure unzip the file and rename it
+rm -rf $HOME/Downloads/zookeeper
+tar -xzvf $HOME/Downloads/zookeeper.tar.gz -C $HOME/Downloads/
+mv $HOME/Downloads/zookeeper-3.4.10 $HOME/Downloads/zookeeper
+rm $HOME/Downloads/zookeeper/conf/zoo_sample.cfg
+cp ./zookeeper/zoo.cfg $HOME/Downloads/zookeeper/conf
+echo $clientID > ./zookeeper/myid
+
+ssh -o StrictHostKeyChecking=no $client << EOF
+expect <<- DONE
+    spawn sudo rm -rf /var/lib/zookeeper
+    expect {
+        "*?assword*" {
+            send -- "$password\r"
+            exp_continue
+        }
+        eof
+    }
+    spawn sudo mkdir /var/lib/zookeeper
+    expect {
+        "*?assword*" {
+            send -- "$password\r"
+            exp_continue
+        }
+        eof
+    }
+    spawn sudo rm -rf /usr/local/zookeeper
+    expect {
+        "*?assword*" {
+            send -- "$password\r"
+            exp_continue
+        }
+        eof
+    }
+DONE
+EOF
+
+expect <<- DONE
+    set timeout -1
+    spawn sudo scp -o StrictHostKeyChecking=no ./zookeeper/myid $client:/var/lib/zookeeper/
+    expect {
+        "*?assword*" {
+            send -- "$password\r"
+            exp_continue
+        }
+        eof
+    }
+    spawn sudo scp -o StrictHostKeyChecking=no -r $HOME/Downloads/zookeeper $client:/usr/local/zookeeper
+    expect {
+        "*?assword*" {
+            send -- "$password\r"
+            exp_continue
+        }
+        eof
+    }
+
+DONE
+
+rm -rf $HOME/Downloads/zookeeper
+
+ssh -o StrictHostKeyChecking=no $client << EOF
+expect <<- DONE
+    # change the owner of the folder so that the user can access without sudo
+    spawn sudo chown -R $(whoami).$(whoami) /usr/local/zookeeper
+    expect "*?assword*"
+    send -- "$password\r"
+    expect eof
+    spawn sudo chown -R $(whoami).$(whoami) /var/lib/zookeeper
+    expect "*?assword*"
+    send -- "$password\r"
+    expect eof
+DONE
+/usr/local/zookeeper/bin/zkServer.sh start
+EOF
+exit 0

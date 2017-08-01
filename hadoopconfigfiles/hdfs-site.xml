@@ -68,7 +68,7 @@
     <value>org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider</value>
   </property>
   <property>
-    <name>dfs.ha.automatic-failover.enabled.cluster-1</name>
+    <name>dfs.ha.automatic-failover.enabled</name>
     <value>true</value>
   </property>
   <property>

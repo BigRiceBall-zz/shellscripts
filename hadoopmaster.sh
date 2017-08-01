@@ -39,7 +39,6 @@ do
         exit 1
     fi
     wget -c -O $HOME/Downloads/hadoop.tar.gz -t 0 http://mirrors.tuna.tsinghua.edu.cn/apache/hadoop/common/hadoop-2.7.3/hadoop-2.7.3.tar.gz
-    result=$?
     md5=$(md5sum $HOME/Downloads/hadoop.tar.gz | cut -d ' ' -f1)
     md5=$(echo $md5 | tr [a-z] [A-Z])
     if [ "$md5" != "3455BB57E4B4906BBEA67B58CCA78FA8" ]
@@ -49,14 +48,7 @@ do
         continue
     fi
     echo -e "\n md5 check success \n"
-    if [ "$result" != "0" ]
-    then
-        echo "failed, download error, re-downloading"
-        rm $HOME/Downloads/hadoop.tar.gz
-        continue
-    else
-        break
-    fi
+    break
 done
 
 expect <<- DONE

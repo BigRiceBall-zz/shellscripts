@@ -1,8 +1,10 @@
 <configuration>
     <nameservice name="cluster-1">
-        <!--Note: the formate of namenode has to be <namenode id=, ip=>, name is the id of the namenode in the cluster -->
+        <!--Note: the formate of namenode has to be <namenode id=?, ip=?>, id is the id of the namenode in the cluster -->
         <!--Note: the hostname of the namenode is automatically named by consisting of name of nameservice and id of namenode.-->
         <!-- e.g. nameservice-namenode, cluster-1-nn-1-->
+        <!--Note: the id is optional, if not set, it will automatically set to type-X, according to the type of node [namenode, journalnode, zookeeper...] -->
+        <!--Recommendation: DO NOT SET THE ID BY YOURSELF, IF TWO NODE HAS THE SAME ID, IT WILL NOE DETECT it. -->
         <namenode ip="192.168.1.83"/>
         <namenode ip="192.168.1.31"/>
         <journalnode ip="192.168.1.31"/>

@@ -1,6 +1,7 @@
 export HADOOP_HOME=/usr/local/hadoop
 export PATH=$PATH:$HADOOP_HOME/bin
 export PATH=$PATH:$HADOOP_HOME/sbin
+export HADOOP_PREFIX=$HADOOP_HOME
 # # export HADOOP_MAPRED_HOME=$HADOOP_MAPRED_HOME:$HADOOP_HOME/share/hadoop/mapreduce/lib/*
 # # export HADOOP_COMMON_HOME=$HADOOP_COMMON_HOME:$HADOOP_HOME/share/hadoop/common/lib/*
 # # export HADOOP_HDFS_HOME=$HADOOP_HDFS_HOME:$HADOOP_HOME/share/hadoop/hdfs/lib/*

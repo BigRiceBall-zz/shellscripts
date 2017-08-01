@@ -119,6 +119,16 @@ expect <<- FIN
     expect "*?assword*"
     send -- "$password\r"
     expect eof
+
+    spawn sudo rm -rf /usr/local/zookeeper
+    expect "*?assword*"
+    send -- "$password\r"
+    expect eof
+
+    spawn sudo rm -rf /varlib/zookeeper
+    expect "*?assword*"
+    send -- "$password\r"
+    expect eof
 FIN
 EOF
 done

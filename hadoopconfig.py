@@ -4,6 +4,8 @@ from lxml import etree
 import re
 import os
 import sys
+import time
+
 
 parser = etree.XMLParser(remove_blank_text=True)
 hdfs_tree = etree.parse("./hadoopconfigfiles/hdfs-site.xml", parser)
@@ -121,6 +123,8 @@ class Configuration:
         self.setClients()
         self.addJobhistory()
         self.setHostNamenode()
+        self.allMachines = set()
+        self.setAllMachines()
 
     def setHostNamenode(self):
         for nameservice in self.nameservices:
@@ -210,6 +214,21 @@ class Configuration:
                 if self.ip != journalnode.ip and not journalnode.ip in self.clients:
                     self.clients[journalnode.ip] = journalnode.hostname
 
+    def setAllMachines(self):
+        for nameservice in self.nameservices:
+            for namenode in nameservice.namenodes:
+                self.allMachines.add(namenode.ip)
+            for journalnode in nameservice.journalnodes:
+                self.allMachines.add(journalnode.ip)
+            for resourcemanager in nameservice.resourcemanagers:
+                self.allMachines.add(resourcemanager.ip)
+            for zookeeper in nameservice.zookeepers:
+                self.allMachines.add(zookeeper.ip)
+        for datanode in self.datanodes:
+            self.allMachines.add(namenode.ip)
+        self.allMachines.add(self.jobhistory.ip)
+
+
     def __repr__(self):
         return str(self)
 
@@ -260,7 +279,7 @@ def setnamenodeHA():
         addProperty(hdfs_root, "dfs.namenode.shared.edits.dir", nameservice.getJournalnodesHost())
         addProperty(hdfs_root, "dfs.client.failover.proxy.provider." + nameservice.name,
                     "org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider")
-        addProperty(hdfs_root, "dfs.ha.automatic-failover.enabled." + nameservice.name, "true")
+        addProperty(hdfs_root, "dfs.ha.automatic-failover.enabled", "true")
         addProperty(core_root, "ha.zookeeper.quorum", nameservice.getZookeepersHost())
         modifyProperty(core_root, "fs.defaultFS", "hdfs://" + nameservice.name)
 
@@ -312,16 +331,29 @@ def startJournalNodes(config):
 def formatNamenode(config):
     os.system("source /etc/profile.d/jdkenv.sh && source /etc/profile.d/hadoopenv.sh && \
                /usr/local/hadoop/bin/hdfs namenode -format && /usr/local/hadoop/sbin/hadoop-daemon.sh start namenode")
-    os.system("")
     for nameservice in config.nameservices:
         for namenode in nameservice.namenodes:
             if namenode.ip != config.ip:
                 os.system("ssh -o StrictHostKeyChecking=no " + namenode.hostname + " <<DONE\n\
                             /usr/local/hadoop/bin/hdfs namenode -bootstrapStandby\n\
                             /usr/local/hadoop/sbin/hadoop-daemon.sh start namenode\nDONE\n")
-    os.system("/usr/local/hadoop/bin/hdfs haadmin -transitionToActive " + config.namenode.id)
 
-import time
+def sshNNtoNN(config, password):
+    for nameservice in config.nameservices:
+        for namenode in nameservice.namenodes:
+            if namenode.ip != config.ip:
+                os.system("ssh -o StrictHostKeyChecking=no " + namenode.hostname + " -C '/bin/bash -s' < ./sshserver.sh " + password )
+                for ip in config.allMachines:
+                    if namenode.ip != ip:
+                        os.system("ssh -o StrictHostKeyChecking=no " + namenode.hostname + " bash -s < ./sshclient.sh " + password + " " + ip)
+
+def setZookeeper(config, password):
+    for nameservice in config.nameservices:
+        for index, zookeeper in enumerate(nameservice.zookeepers):
+            os.system("./zookeeper.sh " + password + " " + zookeeper.ip + " " + str(index+1))
+
+def formatZookeeper():
+    os.system("$HADOOP_PREFIX/bin/hdfs zkfc -formatZK")
 
 if __name__ == "__main__":
     config = Configuration(config_root)
@@ -360,3 +392,6 @@ if __name__ == "__main__":
             sys.exit(1)
     startJournalNodes(config)
     formatNamenode(config)
+    sshNNtoNN(config, argv[1])
+    setZookeeper(config, argv[1])
+    formatZookeeper()

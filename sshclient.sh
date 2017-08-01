@@ -5,7 +5,7 @@ client=$2
 # clients=($(./getClientsIP.sh))
 
 function usage () {
-    echo 'Usage : Script <password>'
+    echo 'Usage : Script <password> <client>'
     exit 1
 }
 
