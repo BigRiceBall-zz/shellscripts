@@ -1,6 +1,7 @@
 #! /bin/bash
+dir=$(cd -P -- "$(dirname -- "$0")" && cd .. && pwd -P)
 
-clients=($(./getClientsIP.sh))
+clients=($($dir/aux/getClientsIP.sh))
 password=$1
 
 function usage () {
@@ -125,10 +126,11 @@ expect <<- FIN
     send -- "$password\r"
     expect eof
 
-    spawn sudo rm -rf /varlib/zookeeper
+    spawn sudo rm -rf /var/lib/zookeeper
     expect "*?assword*"
     send -- "$password\r"
     expect eof
 FIN
+    rm -rf ~/zookeeper.out
 EOF
 done

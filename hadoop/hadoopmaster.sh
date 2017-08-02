@@ -5,6 +5,7 @@ password=$1
 # clients=($(./getClientsIP.sh))
 # ip=$(ip route get 8.8.8.8 | head -1 | cut -d' ' -f8)
 hostname=$2
+working_dir=$(cd -P -- "$(dirname -- "$0")" && cd .. && pwd -P)
 
 function usage () {
     echo 'Usage : Script <password> <hostname>'
@@ -61,7 +62,7 @@ expect <<- DONE
     expect eof
 
     # copy the host file to /etc/ in namenode
-    spawn sudo cp ./hadoopconfigfiles/hosts /etc/hosts
+    spawn sudo cp $working_dir/conf/hadoop/hosts /etc/hosts
     expect "*?assword*"
     send -- "$password\r"
     expect eof
@@ -83,35 +84,35 @@ expect <<- DONE
     expect eof
 
     # configure the hadoop to namenode
-    spawn sudo cp ./hadoopconfigfiles/hadoopenv.sh /etc/profile.d/
+    spawn sudo cp $working_dir/conf/hadoop/hadoopenv.sh /etc/profile.d/
     expect "*?assword*"
     send -- "$password\r"
     expect eof
-    spawn sudo cp ./hadoopconfigfiles/hadoop-env.sh ${hadoop_dir}/hadoop/etc/hadoop
+    spawn sudo cp $working_dir/conf/hadoop/hadoop-env.sh ${hadoop_dir}/hadoop/etc/hadoop
     expect "*?assword*"
     send -- "$password\r"
     expect eof
-    spawn sudo cp ./hadoopconfigfiles/core-site.xml ${hadoop_dir}/hadoop/etc/hadoop
+    spawn sudo cp $working_dir/conf/hadoop/core-site.xml ${hadoop_dir}/hadoop/etc/hadoop
     expect "*?assword*"
     send -- "$password\r"
     expect eof
-    spawn sudo cp ./hadoopconfigfiles/hdfs-site.xml ${hadoop_dir}/hadoop/etc/hadoop
+    spawn sudo cp $working_dir/conf/hadoop/hdfs-site.xml ${hadoop_dir}/hadoop/etc/hadoop
     expect "*?assword*"
     send -- "$password\r"
     expect eof
-    spawn sudo cp ./hadoopconfigfiles/mapred-site.xml ${hadoop_dir}/hadoop/etc/hadoop
+    spawn sudo cp $working_dir/conf/hadoop/mapred-site.xml ${hadoop_dir}/hadoop/etc/hadoop
     expect "*?assword*"
     send -- "$password\r"
     expect eof
-    spawn sudo cp ./hadoopconfigfiles/yarn-site.xml ${hadoop_dir}/hadoop/etc/hadoop
+    spawn sudo cp $working_dir/conf/hadoop/yarn-site.xml ${hadoop_dir}/hadoop/etc/hadoop
     expect "*?assword*"
     send -- "$password\r"
     expect eof
-    spawn sudo cp ./hadoopconfigfiles/masters ${hadoop_dir}/hadoop/etc/hadoop
+    spawn sudo cp $working_dir/conf/hadoop/masters ${hadoop_dir}/hadoop/etc/hadoop
     expect "*?assword*"
     send -- "$password\r"
     expect eof
-    spawn sudo cp ./hadoopconfigfiles/slaves ${hadoop_dir}/hadoop/etc/hadoop
+    spawn sudo cp $working_dir/conf/hadoop/slaves ${hadoop_dir}/hadoop/etc/hadoop
     expect "*?assword*"
     send -- "$password\r"
     expect eof

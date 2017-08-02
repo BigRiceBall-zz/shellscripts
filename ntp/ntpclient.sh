@@ -3,6 +3,8 @@
 password=$1
 ip=$(ip route get 8.8.8.8 | head -1 | cut -d' ' -f8)
 client=$2
+working_dir=$(cd -P -- "$(dirname -- "$0")" && cd .. && pwd -P)
+
 # clients=($(./getClientsIP.sh))
 
 function usage () {
@@ -25,7 +27,7 @@ fi
 # fi
 
 # modified the client config according to the ip
-sed -i "25 s/.*/server $ip iburst/" ./ntpconfigfiles/ntpclient.conf
+sed -i "25 s/.*/server $ip iburst/" $working_dir/conf/ntp/ntpclient.conf
 
 #
 # for x in $( seq 0 `expr ${#clients[@]} - 1` )
@@ -35,7 +37,7 @@ expect <<- DONE
     set timeout -1
 
     # send the ntp client config to the client.
-    spawn sudo scp -o StrictHostKeyChecking=no ./ntpconfigfiles/ntpclient.conf $client:/etc/ntp.conf
+    spawn sudo scp -o StrictHostKeyChecking=no $working_dir/conf/ntp/ntpclient.conf $client:/etc/ntp.conf
     expect {
         "*?assword*" {
             send -- "$password\r"

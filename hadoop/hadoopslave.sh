@@ -4,6 +4,7 @@ hadoop_dir=/usr/local
 password=$1
 client=$2
 hostname=$3
+working_dir=$(cd -P -- "$(dirname -- "$0")" && cd .. && pwd -P)
 
 function usage () {
     echo 'Usage : Script <password> <client> <client hostname>'
@@ -26,7 +27,7 @@ fi
 expect <<- DONE
     set timeout -1
     # configure the host file to datanode
-    spawn sudo scp -o StrictHostKeyChecking=no ./hadoopconfigfiles/hosts $client:/etc/hosts
+    spawn sudo scp -o StrictHostKeyChecking=no $working_dir/conf/hadoop/hosts $client:/etc/hosts
     expect {
         "*?assword*" {
             send -- "$password\r"
@@ -44,7 +45,7 @@ expect <<- DONE
         }
         eof
     }
-    spawn sudo scp ./hadoopconfigfiles/hadoopenv.sh $client:/etc/profile.d/
+    spawn sudo scp $working_dir/conf/hadoop/hadoopenv.sh $client:/etc/profile.d/
     expect {
         "*?assword*" {
             send -- "$password\r"

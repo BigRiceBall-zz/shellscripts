@@ -1,3 +1,4 @@
+#! /bin/python
 
 import xml.etree.cElementTree as ET
 from lxml import etree
@@ -6,110 +7,21 @@ import os
 import sys
 import time
 
+from aux.hadoop.node import *
+from aux.hadoop.nameservice import *
 
+path = os.path.abspath(os.path.dirname(__file__))
 parser = etree.XMLParser(remove_blank_text=True)
-hdfs_tree = etree.parse("./hadoopconfigfiles/hdfs-site.xml", parser)
+hdfs_tree = etree.parse(path + "/conf/hadoop/hdfs-site.xml", parser)
 hdfs_root = hdfs_tree.getroot()
-core_tree = etree.parse("./hadoopconfigfiles/core-site.xml", parser)
+core_tree = etree.parse(path + "/conf/hadoop/core-site.xml", parser)
 core_root = core_tree.getroot()
-yarn_tree = etree.parse("./hadoopconfigfiles/yarn-site.xml", parser)
+yarn_tree = etree.parse(path + "/conf/hadoop/yarn-site.xml", parser)
 yarn_root = yarn_tree.getroot()
-mapred_tree = etree.parse("./hadoopconfigfiles/mapred-site.xml", parser)
+mapred_tree = etree.parse(path + "/conf/hadoop/mapred-site.xml", parser)
 mapred_root = mapred_tree.getroot()
-config_tree = etree.parse("./clients/clients.xml", parser)
+config_tree = etree.parse(path + "/clients/clients.xml", parser)
 config_root = config_tree.getroot()
-
-class Nameservice:
-
-    def __init__(self, name):
-        self.name = name
-        self.namenodes = []
-        self.journalnodes = []
-        self.resourcemanagers = []
-        self.zookeepers = []
-        self.hostnames = {}
-
-    def __repr__(self):
-        return str(self)
-
-    def __str__(self):
-        return "<name: %s, namenodes: %s>" % (self.name, self.namenodes)
-
-    def addNode(self, type, node):
-        if type == "namenode":
-            self.namenodes.append(node)
-        elif type == "journalnode":
-            self.journalnodes.append(node)
-        elif type == "resourcemanager":
-            self.resourcemanagers.append(node)
-        elif type == "zookeeper":
-            self.zookeepers.append(node)
-
-
-    def getNamenodesID(self):
-        str = ""
-        for namenode in self.namenodes[:-1]:
-            str += namenode.id + ","
-        else:
-            str += self.namenodes[-1].id
-        return str
-
-    def getJournalnodesHost(self):
-        str = "qjournal://"
-        for journalnode in self.journalnodes[:-1]:
-            str += journalnode.hostname + ":8485;"
-        else:
-            str += self.journalnodes[-1].hostname + ":8485/" + self.name
-        return str
-
-    def getZookeepersHost(self):
-        str = ""
-        for zookeeper in self.zookeepers[:-1]:
-            str += zookeeper.hostname + ":2181,"
-        else:
-            str += self.zookeepers[-1].hostname + ":2181"
-        return str
-
-    def setHostnames(self):
-        for namenode in self.namenodes:
-            if namenode.ip in self.hostnames:
-                self.hostnames[namenode.ip].append(namenode.hostname)
-            else:
-                self.hostnames[namenode.ip] = []
-                self.hostnames[namenode.ip].append(namenode.hostname)
-        for journalnode in self.journalnodes:
-            if journalnode.ip in self.hostnames:
-                self.hostnames[journalnode.ip].append(journalnode.hostname)
-            else:
-                self.hostnames[journalnode.ip] = []
-                self.hostnames[journalnode.ip].append(journalnode.hostname)
-        for zookeeper in self.zookeepers:
-            if zookeeper.ip in self.hostnames:
-                self.hostnames[zookeeper.ip].append(zookeeper.hostname)
-            else:
-                self.hostnames[zookeeper.ip] = []
-                self.hostnames[zookeeper.ip].append(zookeeper.hostname)
-        for resourcemanager in self.resourcemanagers:
-            if resourcemanager.ip in self.hostnames:
-                self.hostnames[resourcemanager.ip].append(resourcemanager.hostname)
-            else:
-                self.hostnames[resourcemanager.ip] = []
-                self.hostnames[resourcemanager.ip].append(resourcemanager.hostname)
-
-class Node:
-
-    def __init__(self, id, ip, hostname, type):
-        self.id = id
-        self.ip = ip
-        self.hostname = hostname
-        self.type = type
-
-    def __repr__(self):
-        return str(self)
-
-    def __str__(self):
-        return "<IP: %s, id: %s, hostname: %s, type: %s>" % (self.ip, self.id, self.hostname, self.type)
-
 
 class Configuration:
     def __init__(self, root):
@@ -292,29 +204,29 @@ def setnamenodeHA():
 
     et = etree.ElementTree(hdfs_root)
     docinfo= hdfs_tree.docinfo
-    et.write("./hadoopconfigfiles/hdfs-site.xml", pretty_print=True, xml_declaration=True, encoding=docinfo.encoding)
+    et.write(path + "/conf/hadoop/hdfs-site.xml", pretty_print=True, xml_declaration=True, encoding=docinfo.encoding)
     et = etree.ElementTree(core_root)
     docinfo= core_tree.docinfo
-    et.write("./hadoopconfigfiles/core-site.xml", pretty_print=True, xml_declaration=True, encoding=docinfo.encoding)
+    et.write(path + "/conf/hadoop/core-site.xml", pretty_print=True, xml_declaration=True, encoding=docinfo.encoding)
     et = etree.ElementTree(yarn_root)
     docinfo= yarn_tree.docinfo
-    et.write("./hadoopconfigfiles/yarn-site.xml", pretty_print=True, xml_declaration=True, encoding=docinfo.encoding)
+    et.write(path + "/conf/hadoop/yarn-site.xml", pretty_print=True, xml_declaration=True, encoding=docinfo.encoding)
     et = etree.ElementTree(mapred_root)
     docinfo= mapred_tree.docinfo
-    et.write("./hadoopconfigfiles/mapred-site.xml", pretty_print=True, xml_declaration=True, encoding=docinfo.encoding)
+    et.write(path + "/conf/hadoop/mapred-site.xml", pretty_print=True, xml_declaration=True, encoding=docinfo.encoding)
 
 def setHost():
-    if os.path.isfile("./hadoopconfigfiles/hosts"):
-        os.remove("./hadoopconfigfiles/hosts")
-    with open("./hadoopconfigfiles/hosts", "w") as file:
+    if os.path.isfile(path + "/conf/hadoop/hosts"):
+        os.remove(path + "/conf/hadoop/hosts")
+    with open(path + "/conf/hadoop/hosts", "w") as file:
         newhosts = config.getHosts()
         newhosts.insert(0, "127.0.0.1 localhost\n")
         file.writelines(newhosts)
 
 def setSlaves():
-    if os.path.isfile("./hadoopconfigfiles/slaves"):
-        os.remove("./hadoopconfigfiles/slaves")
-    with open("./hadoopconfigfiles/slaves", "w") as file:
+    if os.path.isfile(path + "/conf/hadoop/slaves"):
+        os.remove(path + "/conf/hadoop/slaves")
+    with open(path + "/conf/hadoop/slaves", "w") as file:
         slaves = config.getSlaves()
         file.writelines(slaves)
 
@@ -342,18 +254,24 @@ def sshNNtoNN(config, password):
     for nameservice in config.nameservices:
         for namenode in nameservice.namenodes:
             if namenode.ip != config.ip:
-                os.system("ssh -o StrictHostKeyChecking=no " + namenode.hostname + " -C '/bin/bash -s' < ./sshserver.sh " + password )
+                os.system("ssh -o StrictHostKeyChecking=no " + namenode.hostname + " -C '/bin/bash -s' < " + path + "/ssh/sshserver.sh " + password)
                 for ip in config.allMachines:
                     if namenode.ip != ip:
-                        os.system("ssh -o StrictHostKeyChecking=no " + namenode.hostname + " bash -s < ./sshclient.sh " + password + " " + ip)
+                        os.system("ssh -o StrictHostKeyChecking=no " + namenode.hostname + " bash -s < " + path + "/ssh/sshclient.sh " + password + " " + ip)
 
 def setZookeeper(config, password):
+    os.system("rm " + path + "/conf/zookeeper/zoo.cfg")
+    os.system("cp " + path + "/conf/zookeeper/zoo_sample.cfg " + path + "/conf/zookeeper/zoo.cfg")
     for nameservice in config.nameservices:
         for index, zookeeper in enumerate(nameservice.zookeepers):
-            os.system("./zookeeper.sh " + password + " " + zookeeper.ip + " " + str(index+1))
+            os.system("echo server." + str(index + 1) + "=" + zookeeper.hostname + ":2888:3888 >> " + path + "/conf/zookeeper/zoo.cfg")
+    for nameservice in config.nameservices:
+        for index, zookeeper in enumerate(nameservice.zookeepers):
+            os.system(path + "/zookeeper/zookeeper.sh " + password + " " + zookeeper.ip + " " + str(index+1))
 
 def formatZookeeper():
-    os.system("$HADOOP_PREFIX/bin/hdfs zkfc -formatZK")
+    os.system("/usr/local/hadoop/sbin/stop-dfs.sh")
+    os.system("source /etc/profile.d/jdkenv.sh && source /etc/profile.d/hadoopenv.sh && $HADOOP_PREFIX/bin/hdfs zkfc -formatZK")
 
 if __name__ == "__main__":
     config = Configuration(config_root)
@@ -363,28 +281,28 @@ if __name__ == "__main__":
     if len(sys.argv) != 2:
         print 'Usage : Script <password>'
         sys.exit(1)
-    if os.system("./serverpreconfig.sh" + " " + argv[1]) == 0:
+    if os.system(path + "/serverpreconfig.sh" + " " + argv[1]) == 0:
         os.system("clear")
         print "Pre-configuration of Server is done."
     else:
         print "Pre-configuration of Server failed."
         sys.exit(1)
     for ip in config.clients.keys():
-        if os.system("./clientpreconfig.sh" + " " + argv[1] + " " + ip) == 0:
+        if os.system(path + "/clientpreconfig.sh" + " " + argv[1] + " " + ip) == 0:
             os.system("clear")
             print "Pre-configuration of client " + ip + " is done."
         else:
             print "Pre-configuration of client " + ip + " failed."
             sys.exit(1)
 
-    if os.system("./hadoopmaster.sh" + " " + argv[1] + " " + config.namenode.hostname) == 0:
+    if os.system(path + "/hadoop/hadoopmaster.sh" + " " + argv[1] + " " + config.namenode.hostname) == 0:
         os.system("clear")
         print "Hadoop configuration of Server is done."
     else:
         print "Hadoop configuration of Server failed."
         sys.exit(1)
     for (ip, hostname) in config.clients.items():
-        if os.system("./hadoopslave.sh" + " " + argv[1] + " " + ip + " " + hostname) == 0:
+        if os.system(path + "/hadoop/hadoopslave.sh" + " " + argv[1] + " " + ip + " " + hostname) == 0:
             os.system("clear")
             print "Hadoop configuration of client " + ip + " is done."
         else:

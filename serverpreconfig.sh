@@ -1,6 +1,7 @@
 #! /bin/bash
 
 password=$1
+working_dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 
 function usage () {
     echo 'Usage : Script <password>'
@@ -23,7 +24,7 @@ fi
 # install java jdk
 expect <<- DONE
     set timeout -1
-    spawn sudo ./jdkserver.sh
+    spawn sudo $working_dir/jdk/jdkserver.sh
     expect {
         "*?assword*" {
             send -- "$password\r"
@@ -41,9 +42,9 @@ DONE
 if [ $? -ne 1 ]
 then
     # configure ssh without password
-    ./sshserver.sh $password
+    $working_dir/ssh/sshserver.sh $password
     # configure NTP server
-    ./ntpserver.sh $password
+    $working_dir/ntp/ntpserver.sh $password
 
     exit 0
 else

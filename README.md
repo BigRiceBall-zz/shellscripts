@@ -11,8 +11,7 @@ automatically download and configure hadoop in server
 `./hadoopmaster.sh password masterhostname`
 
 automatically transfer hadoop to client  
-`./hadoopmaster.sh password client clienthostname`
-
+`./hadoopslave.sh password client clienthostname`
 
 automatically download java jdk and congfigure enviroment vairables, ssh, and ntp in server  
 `./serverpreconfig.sh password`

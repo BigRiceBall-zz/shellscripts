@@ -1,6 +1,7 @@
 #! /bin/bash
 
 password=$1
+working_dir=$(cd -P -- "$(dirname -- "$0")" && cd .. && pwd -P)
 
 function usage () {
     echo 'Usage : Script <password>'
@@ -18,7 +19,7 @@ expect <<- DONE
     set timeout -1
 
     # copy ntp server config to /etc/
-    spawn sudo cp ./ntpconfigfiles/ntp.conf /etc/
+    spawn sudo cp $working_dir/conf/ntp/ntp.conf /etc/
     expect "*?assword*"
     send -- "$password\r"
     expect eof

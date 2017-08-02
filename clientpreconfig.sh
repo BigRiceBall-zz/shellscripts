@@ -2,6 +2,7 @@
 
 password=$1
 client=$2
+working_dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 
 function usage () {
     echo 'Usage : Script <password> <client>'
@@ -21,8 +22,8 @@ then
     exit 1
 fi
 
-./jdkclient.sh $password $client
+$working_dir/jdk/jdkclient.sh $password $client
 # configure ssh without password
-./sshclient.sh $password $client
+$working_dir/ssh/sshclient.sh $password $client
 # configure NTP client
-./ntpclient.sh $password $client
+$working_dir/ntp/ntpclient.sh $password $client

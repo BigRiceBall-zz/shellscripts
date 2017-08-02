@@ -2,6 +2,7 @@
 
 
 zookeeper_dir=/usr/local
+working_dir=$(cd -P -- "$(dirname -- "$0")" && cd .. && pwd -P)
 password=$1
 client=$2
 clientID=$3
@@ -44,13 +45,13 @@ do
     break
 done
 
-# configure unzip the file and rename it
+# unzip the file and rename it
 rm -rf $HOME/Downloads/zookeeper
 tar -xzvf $HOME/Downloads/zookeeper.tar.gz -C $HOME/Downloads/
 mv $HOME/Downloads/zookeeper-3.4.10 $HOME/Downloads/zookeeper
 rm $HOME/Downloads/zookeeper/conf/zoo_sample.cfg
-cp ./zookeeper/zoo.cfg $HOME/Downloads/zookeeper/conf
-echo $clientID > ./zookeeper/myid
+cp $working_dir/conf/zookeeper/zoo.cfg $HOME/Downloads/zookeeper/conf
+echo $clientID > $working_dir/conf/zookeeper/myid
 
 ssh -o StrictHostKeyChecking=no $client << EOF
 expect <<- DONE
@@ -83,7 +84,7 @@ EOF
 
 expect <<- DONE
     set timeout -1
-    spawn sudo scp -o StrictHostKeyChecking=no ./zookeeper/myid $client:/var/lib/zookeeper/
+    spawn sudo scp -o StrictHostKeyChecking=no $working_dir/conf/zookeeper/myid $client:/var/lib/zookeeper/
     expect {
         "*?assword*" {
             send -- "$password\r"
@@ -116,6 +117,6 @@ expect <<- DONE
     send -- "$password\r"
     expect eof
 DONE
-/usr/local/zookeeper/bin/zkServer.sh start
+source /etc/profile.d/jdkenv.sh && source /etc/profile.d/hadoopenv.sh && /usr/local/zookeeper/bin/zkServer.sh start
 EOF
 exit 0
