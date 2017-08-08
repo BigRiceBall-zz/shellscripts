@@ -1,13 +1,14 @@
 127.0.0.1 localhost
 192.168.1.31 cluster-1-namenode-2
 192.168.1.31 cluster-1-journalnode-1
-192.168.1.31 cluster-1-zookeeper-1
 192.168.1.158 cluster-1-journalnode-3
-192.168.1.158 cluster-1-zookeeper-3
 192.168.1.83 cluster-1-namenode-1
 192.168.1.83 cluster-1-resourcemanager-1
 192.168.1.47 cluster-1-journalnode-2
-192.168.1.47 cluster-1-zookeeper-2
 192.168.1.47 datanode-1
 192.168.1.158 datanode-2
+192.168.1.31 datanode-3
+192.168.1.31 zookeeper-1
+192.168.1.47 zookeeper-2
+192.168.1.158 zookeeper-3
 192.168.1.158 jobhistory

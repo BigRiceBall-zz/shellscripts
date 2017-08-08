@@ -1,21 +1,33 @@
+<?xml version='1.0' encoding='UTF-8'?>
 <configuration>
+  <nameservices>
     <nameservice name="cluster-1">
-        <!--Note: the formate of namenode has to be <namenode id=?, ip=?>, id is the id of the namenode in the cluster -->
-        <!--Note: the hostname of the namenode is automatically named by consisting of name of nameservice and id of namenode.-->
-        <!-- e.g. nameservice-namenode, cluster-1-nn-1-->
-        <!--Note: the id is optional, if not set, it will automatically set to type-X, according to the type of node [namenode, journalnode, zookeeper...] -->
-        <!--Recommendation: DO NOT SET THE ID BY YOURSELF, IF TWO NODE HAS THE SAME ID, IT WILL NOE DETECT it. -->
+      <!--Note: the formate of namenode has to be <namenode id=?, ip=?>, id is the id of the namenode in the cluster -->
+      <!--Note: the hostname of the namenode is automatically named by consisting of name of nameservice and id of namenode.-->
+      <!-- e.g. nameservice-namenode, cluster-1-nn-1-->
+      <!--Note: the id is optional, if not set, it will automatically set to type-X, according to the type of node [namenode, journalnode, zookeeper...] -->
+      <!--Recommendation: DO NOT SET THE ID BY YOURSELF, IF TWO NODE HAS THE SAME ID, IT WILL NOE DETECT it. -->
+      <namenodes>
         <namenode ip="192.168.1.83"/>
         <namenode ip="192.168.1.31"/>
+      </namenodes>
+      <journalnodes>
         <journalnode ip="192.168.1.31"/>
         <journalnode ip="192.168.1.47"/>
         <journalnode ip="192.168.1.158"/>
-        <zookeeper ip="192.168.1.31"/>
-        <zookeeper ip="192.168.1.47"/>
-        <zookeeper ip="192.168.1.158"/>
-        <resourcemanager ip="192.168.1.83"/>
+      </journalnodes>
+      <resourcemanager ip="192.168.1.83"/>
     </nameservice>
+  </nameservices>
+  <zookeepers>
+    <zookeeper ip="192.168.1.31"/>
+    <zookeeper ip="192.168.1.47"/>
+    <zookeeper ip="192.168.1.158"/>
+  </zookeepers>
+  <datanodes>
     <datanode ip="192.168.1.47"/>
     <datanode ip="192.168.1.158"/>
-    <jobhistory ip="192.168.1.158"/>
+    <datanode ip="192.168.1.31"/>
+  </datanodes>
+  <jobhistory ip="192.168.1.158"/>
 </configuration>

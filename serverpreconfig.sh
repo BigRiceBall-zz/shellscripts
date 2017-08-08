@@ -2,7 +2,6 @@
 
 password=$1
 working_dir=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
-
 function usage () {
     echo 'Usage : Script <password>'
     exit 1
@@ -20,6 +19,13 @@ then
     echo "Don't run as root!"
     exit 1
 fi
+
+installed_expect=$(rpm -qa | grep expect)
+if [ -z "$installed_expect" ]
+then
+    sudo yum install expect
+fi
+echo "expect installed"
 
 # install java jdk
 expect <<- DONE

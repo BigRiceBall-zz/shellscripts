@@ -22,6 +22,8 @@ then
     exit 1
 fi
 
+sudo ssh -t $client "sudo yum install expect"
+
 $working_dir/jdk/jdkclient.sh $password $client
 # configure ssh without password
 $working_dir/ssh/sshclient.sh $password $client

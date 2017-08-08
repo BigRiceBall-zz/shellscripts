@@ -16,16 +16,6 @@ then
     exit 1
 fi
 
-# # check whether the IP array is empty or not.
-# if [ ${#clients[@]} -eq 0 ]
-# then
-#     echo "There are some errors in the clients file"
-#     exit 1
-# fi
-
-# copy the public key to each client
-# for x in $( seq 0 `expr ${#clients[@]} - 1` )
-# do
 expect <<- DONE
     set timeout -1
 
@@ -39,4 +29,3 @@ expect <<- DONE
 
     expect eof
 DONE
-# done
